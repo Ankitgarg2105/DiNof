@@ -1,33 +1,32 @@
-# [Diffusion Models with Deterministic Normalizing Flow Priors](https://openreview.net/forum?id=ACMNVwcR6v)
 
-Our code is built upon the code from [Song et al.](https://github.com/yang-song/score_sde_pytorch). 
-It is tested under Ubuntu 20.04, CUDA 11.6, with NVIDIA A100 GPUs. Python 3.11.1 version is used for development. 
-
+# College Research Project: Diffusion Models with Deterministic Normalizing Flow Priors
+This repository contains our college research project implementing the paper **[Diffusion Models with Deterministic Normalizing Flow Priors](https://openreview.net/forum?id=ACMNVwcR6v)** by Mohsen Zand, Ali Etemad, and Michael Greenspan. 
+## Project Overview
+For our research project, we were tasked with implementing the concepts presented in the base paper, which introduces deterministic normalizing flows as priors for diffusion models. This repository contains the code for reproducing those results and exploring the architecture.
+## Development Environment
+- **OS**: Ubuntu 20.04
+- **CUDA**: 11.6
+- **GPU**: NVIDIA A100 (or equivalent)
+- **Python**: 3.11.1
 ## Datasets
-CIFAR-10 dataset is downloaded automatically.
-To download CelebA-HQ-256 dataset, you can follow the instructions given in [Vahdat and Kautz](https://github.com/NVlabs/NVAE). 
-
-Due to the size limit, we can not include the FID statistics files, which are required to compute the evaluation metrics. For each dataset, however, you can use the following python scripts located in the `fids` folder to compute FID statistics on the CIFAR-10 and CelebA-HQ-256 datasets: `fid_score.py` and `precompute_fid_statistics.py`
-
-## Training and evaluation
-All models can be found in the `models` folder. 
-
-To train a specific model, please run `main.py` and modify the flags to define the required paths and directories. Other flags can be changed if needed. 
-For instance, set `mode` as `train` or `eval` for training or evaluation, respectively. 
-Also, choose one of the 7 provided config files and its corresponding SDE (ve, vp or subvp).  
-All the config files, training and sampling files are self-explanatory. 
-
-
-## Citation
-Please cite our paper if you use code from this repository:
-```
+- **CIFAR-10**: Downloaded automatically during execution.
+- **CelebA-HQ-256**: To use this dataset, please follow the download instructions in [Vahdat and Kautz](https://github.com/NVlabs/NVAE).
+*(Note: FID statistics files are required to compute evaluation metrics but are not included due to file size limits. You can generate them using `fid_score.py` and `precompute_fid_statistics.py` located in the `fids` folder).*
+## Running the Code
+Model architectures are defined in the `models` folder.
+To train or evaluate a specific model, run `main.py` with the appropriate flags for your paths and directories:
+- Set `--mode` to `train` or `eval` for training or evaluation.
+- Select one of the provided configuration files from the `configs` folder (and its corresponding SDE: ve, vp, or subvp).
+All config, training, and sampling files are self-explanatory.
+## Base Paper Citation
+If you are interested in the original research our project is based on, please refer to:
+```bibtex
 @article{
-zand2024diffusion,
-title={Diffusion Models with Deterministic Normalizing Flow Priors},
-author={Mohsen Zand and Ali Etemad and Michael Greenspan},
-journal={Transactions on Machine Learning Research},
-issn={2835-8856},
-year={2024},
-url={https://openreview.net/forum?id=ACMNVwcR6v}
+  zand2024diffusion,
+  title={Diffusion Models with Deterministic Normalizing Flow Priors},
+  author={Mohsen Zand and Ali Etemad and Michael Greenspan},
+  journal={Transactions on Machine Learning Research},
+  year={2024},
+  url={https://openreview.net/forum?id=ACMNVwcR6v}
 }
 ```

@@ -1,0 +1,21 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environment / local configs
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Temporary run directories
+runs/swat_5k/
+runs/swat_demo/
+runs/**/pid.txt
+
+# OS generated files
+.DS_Store
+Thumbs.db

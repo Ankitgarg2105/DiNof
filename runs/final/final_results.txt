@@ -1,0 +1,16 @@
+DiNof Time-Series — Final Results
+==================================================
+  F1                          : 0.7826
+  Precision                   : 0.8438
+  Recall                      : 0.7297
+  AUROC                       : 0.9035
+  Threshold                   : 0.6524
+  noise_level_t               : 0.0500
+  N_true_anomalies            : 37
+  N_pred_anomalies            : 32
+  N_total                     : 312
+  score_mean_normal           : 0.6161
+  score_mean_anomaly          : 0.7044
+
+Panel feedback addressed:
+  Inference = single forward pass (~ms/window, no reverse diffusion)

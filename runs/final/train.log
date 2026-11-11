@@ -1,0 +1,16 @@
+16:11:43  ============================================================
+16:11:43    DiNof Time-Series — Full Training Run
+16:11:43  ============================================================
+16:11:43  Synthetic data already exists.
+16:11:45  Device: cpu  |  Steps: 5000
+16:11:45  ScoreModel1D params : 2,366,899
+16:11:45  RealNVP1D params    : 291,432
+16:11:47  Training from step 0 to 5000 ...
+16:11:47  Step     0/5000  score=1.0022  flow=71.8324
+16:12:32  Step   100/5000  score=0.9855  flow=71.8934
+16:13:15  Step   200/5000  score=0.9619  flow=71.9044
+16:13:57  Step   300/5000  score=0.8939  flow=71.8836
+16:14:39  Step   400/5000  score=0.8217  flow=72.0056
+16:15:22  Step   500/5000  score=0.7353  flow=71.8900
+16:16:04  Step   600/5000  score=0.6415  flow=71.8670
+16:16:47  Step   700/5000  score=0.5601  flow=71.8403

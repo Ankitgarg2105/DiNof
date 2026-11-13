@@ -79,6 +79,8 @@ def load_swat_data(data_dir, source='synthetic'):
         train_data, test_data, test_labels (all numpy arrays [N, features])
     """
     if source == 'synthetic':
+        if os.path.exists(os.path.join(data_dir, 'swat_synthetic', 'train_data.npy')):
+            data_dir = os.path.join(data_dir, 'swat_synthetic')
         train_path = os.path.join(data_dir, 'train_data.npy')
         test_path  = os.path.join(data_dir, 'test_data.npy')
         label_path = os.path.join(data_dir, 'test_labels.npy')

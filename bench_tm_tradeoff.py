@@ -55,8 +55,6 @@ tm_grid = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 1.0]
 
 print('\n' + '=' * 75)
 print('  DiNof — ACCURACY vs. Tm vs. LATENCY TRADEOFF BENCHMARK')
-print(f'  Target Hardware: CPU ({torch.get_num_threads()} threads, batch size = 1)')
-print(f'  Per-pass latency measured: {per_pass_ms:.2f} ms')
 print('=' * 75)
 print(f'  {"Tm":>5}  {"Diffusion Steps":>16}  {"Network Time":>14}  {"Time Saved":>12}  {"SCADA Status":>15}')
 print('  ' + '-' * 71)

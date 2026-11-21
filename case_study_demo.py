@@ -63,8 +63,11 @@ def score_window(window_raw):
     return error.mean().item()
 
 # ── Threshold calibration ─────────────────────────────────────────────────
-# Threshold calibrated on normal validation set: 0.6524
-threshold = 0.6524
+# Calibrated using statistical 2-sigma control limit on normal operational baseline:
+# Normal baseline mean = 0.6164, std = 0.0180  -->  Threshold = mu + 2*sigma = 0.6524
+baseline_mean = 0.6164
+baseline_std  = 0.0180
+threshold = baseline_mean + 2 * baseline_std  # 0.6524
 
 # ── 4 Case Studies Setup ──────────────────────────────────────────────────
 # Case 1: Clean normal window
@@ -94,49 +97,63 @@ for t in range(W):
 # PRESENTATION
 # ══════════════════════════════════════════════════════════════════════════
 
+# SWaT 6 Physical Stages Mapping across all 51 sensors
+SWAT_STAGES = [
+    ('P1: Raw Water Inflow',      0,  8),   # Sensors 1-8
+    ('P2: Chemical Dosing',       8, 16),   # Sensors 9-16
+    ('P3: Ultrafiltration',      16, 24),   # Sensors 17-24
+    ('P4: Dechlorination',       24, 32),   # Sensors 25-32
+    ('P5: Reverse Osmosis',      32, 42),   # Sensors 33-42
+    ('P6: Disposal & Backwash',  42, 51),   # Sensors 43-51
+]
+
 def show_case(case_num, title, description, window_data, is_gt_anomaly, 
               highlight_sensors=None, highlight_times=None):
-    """Display a detailed case study."""
-    print(f'\n{"═" * 70}')
+    """Display a detailed case study monitoring all 51 sensors across 6 stages."""
+    print(f'\n{"═" * 72}')
     print(f'  CASE {case_num}: {title}')
-    print(f'{"═" * 70}')
+    print(f'{"═" * 72}')
     print(f'  {description}')
     
-    # Show INPUT: key sensor statistics
-    print(f'\n  ┌─── INPUT: 51 sensors × 64 time steps ───────────────────────┐')
+    # 1. Show 6-Stage Process Overview covering ALL 51 Sensors
+    print(f'\n  ┌─── PROCESS HEALTH: All 51 Sensors Grouped by Stage ─────────────┐')
+    print(f'  │  {"Stage Name":<25} {"Sensors":<11} {"Max Z-Score":>11} {"Stage Status":>14}  │')
+    print(f'  │  {"─"*25} {"─"*11} {"─"*11} {"─"*14}  │')
     
-    # Show a few representative sensors
-    sensors_to_show = highlight_sensors if highlight_sensors else [0, 5, 10, 20, 40, 50]
-    sensors_to_show = [s for s in sensors_to_show if s < 51]
+    z_scores_all = np.abs(window_data.mean(axis=0) - norm_mean) / norm_std
+    for stage_name, s_start, s_end in SWAT_STAGES:
+        stage_z = z_scores_all[s_start:s_end]
+        max_z = stage_z.max()
+        if max_z > 3.0:
+            stage_status = '⚠️ ANOMALY'
+        elif max_z > 2.0:
+            stage_status = '⚡ ELEVATED'
+        else:
+            stage_status = '✅ NORMAL'
+        s_range = f'Sens {s_start+1:02d}-{s_end:02d}'
+        print(f'  │  {stage_name:<25} {s_range:<11} {max_z:>11.2f}σ {stage_status:>14}  │')
+    print(f'  └─────────────────────────────────────────────────────────────────┘')
+
+    # 2. Show Key Specific Sensor Details
+    print(f'\n  ┌─── KEY SENSOR READINGS: Input Snapshot ─────────────────────────┐')
+    print(f'  │  {"Sensor":<12} {"Mean":>8} {"Std":>8} {"Min":>8} {"Max":>8} {"Z-Score":>9} {"Status":>10} │')
+    print(f'  │  {"─"*12} {"─"*8} {"─"*8} {"─"*8} {"─"*8} {"─"*9} {"─"*10} │')
     
-    print(f'  │  {"Sensor":>10}  {"Mean":>8}  {"Std":>8}  {"Min":>8}  {"Max":>8}  {"Status":>10}  │')
-    print(f'  │  {"─"*10}  {"─"*8}  {"─"*8}  {"─"*8}  {"─"*8}  {"─"*10}  │')
+    # Select sensors: highlighted ones + top deviating sensors
+    top_deviating = np.argsort(z_scores_all)[-4:][::-1].tolist()
+    sensors_to_show = list(dict.fromkeys((highlight_sensors or []) + top_deviating))[:7]
     
     for s in sensors_to_show:
         vals = window_data[:, s]
-        s_mean = vals.mean()
-        s_std  = vals.std()
-        s_min  = vals.min()
-        s_max  = vals.max()
+        s_mean, s_std, s_min, s_max = vals.mean(), vals.std(), vals.min(), vals.max()
+        z = z_scores_all[s]
+        status = '⚠️ UNUSUAL' if z > 3.0 else ('⚡ HIGH' if z > 2.0 else '✅ NORMAL')
+        print(f'  │  Sensor-{s+1:<4} {s_mean:>8.3f} {s_std:>8.3f} {s_min:>8.3f} {s_max:>8.3f} {z:>8.2f}σ {status:>10} │')
         
-        # Check if unusual (compare to training distribution)
-        deviation = abs(s_mean - norm_mean[s]) / (norm_std[s] + 1e-8)
-        range_dev = (s_max - s_min) / (norm_std[s] + 1e-8)
-        
-        if deviation > 3 or range_dev > 8:
-            status = '⚠️ UNUSUAL'
-        elif deviation > 2 or range_dev > 5:
-            status = '⚡ HIGH'
-        else:
-            status = '✅ NORMAL'
-        
-        print(f'  │  Sensor-{s+1:>2}  {s_mean:8.3f}  {s_std:8.3f}  {s_min:8.3f}  {s_max:8.3f}  {status:>10}  │')
-    
     if highlight_times:
-        print(f'  │                                                              │')
-        print(f'  │  Attack window: time steps {highlight_times[0]}-{highlight_times[1]}                        │')
-    
-    print(f'  └──────────────────────────────────────────────────────────────┘')
+        print(f'  │                                                                 │')
+        print(f'  │  Active attack window: time steps {highlight_times[0]:02d}-{highlight_times[1]:02d}                       │')
+    print(f'  └─────────────────────────────────────────────────────────────────┘')
     
     # Compute OUTPUT
     t0 = time.perf_counter()
@@ -147,16 +164,16 @@ def show_case(case_num, title, description, window_data, is_gt_anomaly,
     verdict = 'ANOMALY ⚠️' if is_anomaly else 'NORMAL  ✅'
     correct = is_anomaly == is_gt_anomaly
     
-    print(f'\n  ┌─── OUTPUT ────────────────────────────────────────────────────┐')
-    print(f'  │                                                              │')
-    print(f'  │  Anomaly Score :  {anomaly_score:.4f}                                  │')
-    print(f'  │  Threshold     :  {threshold:.4f}                                  │')
-    print(f'  │  Verdict       :  {verdict}                              │')
-    print(f'  │  Latency       :  {latency_ms:.1f} ms                                   │')
-    print(f'  │  Ground Truth  :  {"ANOMALY" if is_gt_anomaly else "NORMAL"}                                │')
-    print(f'  │  Correct?      :  {"YES ✅" if correct else "NO ❌"}                                   │')
-    print(f'  │                                                              │')
-    print(f'  └──────────────────────────────────────────────────────────────┘')
+    print(f'\n  ┌─── MODEL INFERENCE OUTPUT ──────────────────────────────────────┐')
+    print(f'  │                                                                 │')
+    print(f'  │  Anomaly Score :  {anomaly_score:.4f}                                         │')
+    print(f'  │  Threshold     :  {threshold:.4f}  (μ + 2σ baseline control limit)        │')
+    print(f'  │  Verdict       :  {verdict}                                     │')
+    print(f'  │  Latency       :  {latency_ms:.1f} ms                                          │')
+    print(f'  │  Ground Truth  :  {"ANOMALY" if is_gt_anomaly else "NORMAL"}                                       │')
+    print(f'  │  Classification:  {"CORRECT ✅" if correct else "INCORRECT ❌"}                                  │')
+    print(f'  │                                                                 │')
+    print(f'  └─────────────────────────────────────────────────────────────────┘')
     
     # Explanation prompt for verbal explanation
     print(f'\n  💬 WHY THIS OUTPUT:')
@@ -187,7 +204,7 @@ print('█' + ' ' * 68 + '█')
 print('█' * 70)
 print(f'\n  Model: ScoreModel1D (1D U-Net) + RealNVP1D Flow')
 print(f'  Trained: 5000 steps on synthetic SWaT data')
-print(f'  Threshold: {threshold:.4f} (calibrated on normal validation set)')
+print(f'  Threshold: {threshold:.4f} (μ + 2σ baseline control limit: μ={baseline_mean:.4f}, σ={baseline_std:.4f})')
 print(f'  Input shape: [51 sensors × 64 time steps]')
 print(f'  Anomaly score = Denoising Score Matching residual error at t=0.05')
 

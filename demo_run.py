@@ -97,8 +97,8 @@ def run_demo(config=None, workdir='runs/final', data_dir='data',
         print('\n[2/4] Skipping training (--no_train).')
 
     # ── Step 4: Evaluation ───────────────────────────────────────────────────────
-    print('\n[3/4] Evaluating anomaly detection …')
-    print('  Using score-based denoising error (best method, AUROC>0.9)')
+    print('\n[3/4] Evaluating anomaly detection on test dataset …')
+    print('  Computing score-based residual error at t=0.05 across test windows …')
 
     from runner_ts import init_models_ts, setup_sde, restore_checkpoint
     from losses import get_optimizer as _get_opt

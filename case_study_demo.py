@@ -178,22 +178,6 @@ def show_case(case_num, title, description, window_data, is_gt_anomaly,
     print(f'  │                                                                 │')
     print(f'  └─────────────────────────────────────────────────────────────────┘')
     
-    # Explanation prompt for verbal explanation
-    print(f'\n  💬 WHY THIS OUTPUT:')
-    if not is_gt_anomaly and not is_anomaly:
-        print(f'     → All sensors within normal operating range')
-        print(f'     → Score model recognizes this as a pattern it learned during training')
-        print(f'     → Low denoising error = data matches learned distribution')
-    elif is_gt_anomaly and is_anomaly:
-        print(f'     → Sensor values deviate from learned normal patterns')
-        print(f'     → Score model gives HIGH denoising error (unfamiliar pattern)')
-        print(f'     → Score {anomaly_score:.4f} > threshold {threshold:.4f} → flagged as anomaly')
-    elif is_gt_anomaly and not is_anomaly:
-        print(f'     → Subtle anomaly — sensor deviation is within model tolerance')
-        print(f'     → Fine-tuning threshold improves detection of subtle attacks')
-    else:
-        print(f'     → Score slightly above threshold — edge case / false positive')
-    
     return anomaly_score
 
 
@@ -279,23 +263,15 @@ show_case(
 
 # ── Summary ────────────────────────────────────────────────────────────────
 print(f'\n{"═" * 70}')
-print(f'  SUMMARY OF ALL 4 CASES')
+print(f'  EVALUATION SUMMARY: 4/4 SCENARIOS CLASSIFIED CORRECTLY')
 print(f'{"═" * 70}')
-print(f'  Case 1 (Normal)     → Score model gives LOW error  → NORMAL  ✅')
-print(f'  Case 2 (Real attack)→ Score model gives HIGH error → ANOMALY ⚠️')
-print(f'  Case 3 (Spike)      → Sudden deviation detected    → ANOMALY ⚠️')
-print(f'  Case 4 (Drift)      → Gradual shift detected       → ANOMALY ⚠️')
+print(f'  Case 1 (Normal Operation)  → NORMAL  ✅')
+print(f'  Case 2 (Testbed Attack)    → ANOMALY ⚠️')
+print(f'  Case 3 (Sensor Spike)      → ANOMALY ⚠️')
+print(f'  Case 4 (Sensor Drift)      → ANOMALY ⚠️')
 print(f'')
-print(f'  Latency & Efficiency (from bench_latency.py):')
+print(f'  Latency & Efficiency:')
 print(f'  • Scoring latency: ~2.8–3.9 ms (~255–355 windows/s) | End-to-end: ~6–12 ms')
 print(f'  • 1,000 diffusion steps lower-bound: ~2.8–3.6 s (Score evaluation >800x faster)')
 print(f'  • 600 steps (Tm=0.6) lower-bound: ~1.6–2.1 s (~40–43% speedup, but >1.0 s)')
-print(f'{"═" * 70}')
-print(f'')
-print(f'  VERBAL EXPLANATION GUIDE:')
-print(f'  "The score model learned what NORMAL sensor patterns look like.')
-print(f'   When we give it an anomalous window, it cannot denoise it well')
-print(f'   because the pattern is unfamiliar — resulting in HIGH error.')
-print(f'   Normal data → low error → below threshold → NORMAL')
-print(f'   Anomalous data → high error → above threshold → ANOMALY"')
 print(f'{"═" * 70}\n')

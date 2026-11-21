@@ -202,7 +202,7 @@ def run_demo(config=None, workdir='runs/final', data_dir='data',
         print(f'    {p}')
 
     print('\n' + '='*60)
-    print('  KEY TAKEAWAYS:')
+    print('  PERFORMANCE & LATENCY SUMMARY:')
     print('  • Scoring latency: ~2.8–3.9 ms (~255–355 windows/s) | End-to-end: ~6–12 ms')
     print('  • 1,000-step diffusion lower-bound: ~2.8–3.6 s (Score evaluation >800x faster)')
     print('  • 600 steps (Tm=0.6) lower-bound: ~1.6–2.1 s (~40–43% speedup, but >1.0 s)')

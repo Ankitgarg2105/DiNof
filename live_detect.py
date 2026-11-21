@@ -197,7 +197,7 @@ print(f'\n  Stream segment accuracy: {stream_correct}/{stream_total} ({stream_co
 print(f'  Full Test Set Benchmark (10 seeds): AUROC = 0.885 ± 0.026, F1 = 0.716 ± 0.034 (Best run: F1 = 0.7826)')
 
 print('\n' + '=' * 65)
-print('  KEY TAKEAWAYS:')
+print('  PERFORMANCE & LATENCY SUMMARY:')
 print('  • Scoring latency: ~2.8–3.9 ms (~255–355 windows/s) | End-to-end: ~6–12 ms')
 print('  • 1,000 diffusion steps lower-bound: ~2.8–3.6 s (Score evaluation >800x faster)')
 print('  • 600 steps (Tm=0.6) lower-bound: ~1.6–2.1 s (~40–43% speedup, but >1.0 s)')

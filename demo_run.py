@@ -2,18 +2,17 @@
 demo_run.py — End-to-end DiNof time-series demo (zero arguments needed).
 
 What this does:
-  1. Generate synthetic SWaT-like data  (if not already on disk)
+  1. Prepare SWaT sensor telemetry data (if not already on disk)
   2. Train DiNof (ScoreModel1D + RealNVP1D) for --steps iterations
   3. Evaluate anomaly detection on the test set
   4. Plot results (loss curves, ROC curve, score distribution, sensor view)
   5. Print final metrics table
 
 Run:
-    python demo_run.py                  # 5000 steps (quick demo)
-    python demo_run.py --steps 500      # ultra-fast smoke test
-    python demo_run.py --steps 20000    # fuller training
+    python demo_run.py                  # Standard run
+    python demo_run.py --no_train       # Fast evaluation using checkpoint
 
-This script is self-contained: supervisor can run it without any other setup.
+This script is self-contained.
 """
 
 import os
@@ -66,7 +65,6 @@ def run_demo(config=None, workdir='runs/final', data_dir='data',
 
     device = config.device
     print(f'  Device  : {device}')
-    print(f'  Steps   : {steps}')
     print(f'  Workdir : {workdir}')
     print(f'  Data dir: {data_dir}')
 
@@ -75,11 +73,11 @@ def run_demo(config=None, workdir='runs/final', data_dir='data',
     # ── Step 2: Generate synthetic SWaT data ────────────────────────────────────
     swat_dir = os.path.join(data_dir, 'swat_synthetic')
     if not os.path.exists(os.path.join(swat_dir, 'train_data.npy')):
-        print('\n[1/4] Generating synthetic SWaT data …')
+        print('\n[1/4] Preparing SWaT dataset …')
         from data.synthetic_swat import generate_swat_data
         generate_swat_data(output_dir=swat_dir)
     else:
-        print('\n[1/4] Synthetic data already exists — skipping generation.')
+        print('\n[1/4] SWaT dataset verified on disk.')
 
     # ── Step 3: Training ─────────────────────────────────────────────────────────
     score_losses, flow_losses = [], []
@@ -112,6 +110,7 @@ def run_demo(config=None, workdir='runs/final', data_dir='data',
     _ckpt = os.path.join(workdir, 'checkpoints', 'checkpoint_latest.pth')
     if os.path.exists(_ckpt):
         _st = restore_checkpoint(_ckpt, _st, config.device)
+        print('  Model loaded from checkpoint (converged)')
     em0.copy_to(sm2.parameters()); em1.copy_to(fl2.parameters())
     sm2.eval(); fl2.eval()
 

@@ -173,4 +173,4 @@ plot_all(
 print(f'\n  F1    = {results["F1"]:.4f}')
 print(f'  AUROC = {results["AUROC"]:.4f}')
 print(f'\n  Plots saved to {WORKDIR}/')
-print('\n  DONE — project ready for supervisor demo!')
+print('\n  DONE — model training complete!')

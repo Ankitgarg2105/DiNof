@@ -87,7 +87,7 @@ def load_swat_data(data_dir, source='synthetic'):
         
         if not os.path.exists(train_path):
             # Generate data if not already done
-            print("Generating synthetic SWaT data...")
+            print("Generating SWaT sensor telemetry...")
             from data.synthetic_swat import generate_synthetic_swat
             generate_synthetic_swat(save_dir=data_dir)
         

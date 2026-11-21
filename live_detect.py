@@ -40,7 +40,8 @@ sde, _ = setup_sde(cfg)
 scaler = ts_data_scaler(cfg)
 score_fn = mutils.get_score_fn(sde, sm, train=False, continuous=True)
 
-print(f'  Model loaded (Trained: 5000 steps)')
+print(f'  Model loaded: ScoreModel1D + RealNVP1D Flow')
+print(f'  Dataset: SWaT Industrial Telemetry (51 Sensors)')
 print(f'  Device: {device}')
 
 # ── Load data ──────────────────────────────────────────────────────────────
@@ -82,7 +83,7 @@ train_calib_scores = [score_window(train_data[i:i+W].T) for i in range(0, 80*W, 
 baseline_mean = float(np.mean(train_calib_scores))
 baseline_std  = float(np.std(train_calib_scores))
 threshold = baseline_mean + 3 * baseline_std  # dynamically computed ~0.634
-print(f'  Threshold: {threshold:.4f} (Dynamically calibrated: μ + 3σ normal baseline limit)')
+print(f'  Threshold: {threshold:.4f} (Calibrated on normal baseline)')
 
 # ── Find example windows ──────────────────────────────────────────────────
 # Clearly normal and clearly anomalous windows

@@ -1,6 +1,6 @@
 """
 bench_tm_tradeoff.py — Accuracy vs. Tm vs. Latency Tradeoff Benchmark.
-Answers the supervisor's core question:
+Evaluates the core question:
 "What is the accuracy vs. latency trade-off when tuning the intermediate cutoff Tm?"
 
 Runs in < 5 seconds.

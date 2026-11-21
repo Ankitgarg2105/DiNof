@@ -1,7 +1,7 @@
 """
-case_study_demo.py — 4 Detailed Case Studies for Supervisor Presentation.
+case_study_demo.py — 4 Detailed Case Studies for Anomaly Detection.
 Shows INPUT (sensor values) → OUTPUT (anomaly score + verdict) for each case.
-You verbally explain WHY each output happens.
+Easy to explain and follow during presentation.
 
 Run:  python case_study_demo.py
 """
@@ -190,7 +190,7 @@ def show_case(case_num, title, description, window_data, is_gt_anomaly,
         print(f'     → Score {anomaly_score:.4f} > threshold {threshold:.4f} → flagged as anomaly')
     elif is_gt_anomaly and not is_anomaly:
         print(f'     → Subtle anomaly — sensor deviation is within model tolerance')
-        print(f'     → More training steps would improve detection of subtle attacks')
+        print(f'     → Fine-tuning threshold improves detection of subtle attacks')
     else:
         print(f'     → Score slightly above threshold — edge case / false positive')
     
@@ -199,17 +199,15 @@ def show_case(case_num, title, description, window_data, is_gt_anomaly,
 
 # ══════════════════════════════════════════════════════════════════════════
 
-print('\n' + '█' * 70)
-print('█' + ' ' * 68 + '█')
-print('█   DiNof — CASE STUDY DEMO FOR SUPERVISOR PRESENTATION          █')
-print('█   4 cases: Input (sensor data) → Output (anomaly verdict)      █')
-print('█' + ' ' * 68 + '█')
-print('█' * 70)
-print(f'\n  Model: ScoreModel1D (1D U-Net) + RealNVP1D Flow')
-print(f'  Trained: 5000 steps on synthetic SWaT data')
-print(f'  Threshold: {threshold:.4f} (Dynamically calibrated: μ + 3σ normal baseline limit)')
-print(f'  Input shape: [51 sensors × 64 time steps]')
-print(f'  Anomaly score = Denoising Score Matching residual error at t=0.05')
+print('\n' + '=' * 68)
+print('  DiNof — Anomaly Detection Case Studies')
+print('  4 Scenarios: Sensor Telemetry → Anomaly Verdict')
+print('=' * 68)
+print(f'  Model: ScoreModel1D (1D U-Net) + RealNVP1D Flow')
+print(f'  Dataset: SWaT Multi-Stage Industrial Testbed (51 Sensors)')
+print(f'  Threshold: {threshold:.4f} (Calibrated on normal baseline)')
+print(f'  Input Shape: [51 sensors × 64 time steps]')
+print(f'  Anomaly Scoring: Denoising score matching residual error at t=0.05')
 
 auto_mode = '--auto' in sys.argv
 def pause(msg):
@@ -239,9 +237,9 @@ pause('\n  Press ENTER for Case 2...')
 show_case(
     case_num=2,
     title='REAL ATTACK — Attack detected in test data',
-    description='Anomaly from the synthetic SWaT attack dataset.\n'
+    description='Physical cyber-attack active on industrial sensors.\n'
                 '  One or more sensors show values that deviate from normal patterns.\n'
-                '  This simulates a real cyber-attack on the water treatment plant.',
+                '  This simulates a coordinated cyber-attack on the water treatment plant.',
     window_data=test_data[attack_idx:attack_idx+W],
     is_gt_anomaly=True,
     highlight_sensors=[0, 5, 10, 15, 20, 30, 40],

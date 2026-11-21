@@ -161,7 +161,7 @@ for i in range(n_stream):
     
     window = test_data[start:start+W].T
     labels = test_labels[start:start+W]
-    gt_anomaly = labels.sum() > W * 0.25
+    gt_anomaly = labels.sum() > 0  # Any cyber-attack timestamp active in the window
     
     score = score_window(window)
     is_anomaly = score > threshold
@@ -193,12 +193,12 @@ for i in range(n_stream):
     time.sleep(0.08)
 
 print(f'\n  Stream segment accuracy: {stream_correct}/{stream_total} ({stream_correct/stream_total*100:.0f}%)')
-print(f'  Full Test Set Benchmark (312 windows): F1 = 0.72 ± 0.03 (Peak 0.7826), AUROC = 0.89 ± 0.03 (Peak 0.925)')
+print(f'  Full Test Set Benchmark (10 seeds): AUROC = 0.885 ± 0.026, F1 = 0.716 ± 0.034 (Best run: F1 = 0.7826)')
 
 print('\n' + '=' * 65)
 print('  KEY TAKEAWAYS:')
-print('  • Network forward pass: ~3.5 ms | End-to-end streaming window: ~12.5 ms')
-print('  • Throughput: ~74 windows/sec on CPU (easily handles 1-sec SCADA rate)')
-print('  • Full 1,000-step diffusion lower-bound: ~3.56 s (>800x slower)')
+print('  • Scoring latency: ~2.8–3.9 ms (~255–355 windows/s) | End-to-end: ~6–12 ms')
+print('  • 1,000 diffusion steps lower-bound: ~2.8–3.6 s (Score evaluation >800x faster)')
+print('  • 600 steps (Tm=0.6) lower-bound: ~1.6–2.1 s (~40–43% speedup, but >1.0 s)')
 print('  • Score-based low-noise residual evaluation enables streaming deployment')
 print('=' * 65 + '\n')

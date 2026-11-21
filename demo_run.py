@@ -204,9 +204,9 @@ def run_demo(config=None, workdir='runs/final', data_dir='data',
 
     print('\n' + '='*60)
     print('  KEY TAKEAWAYS:')
-    print('  • Score-based residual evaluation at low noise t=0.05')
-    print('  • Average latency: ~7–12 ms per window on CPU (~100+ win/s)')
-    print('  • Eliminates iterative reverse-diffusion loop during detection')
+    print('  • Network pass: ~3.5 ms | End-to-end window latency: ~12.5 ms')
+    print('  • Throughput: ~74 windows/sec (sequential batch=1 on CPU)')
+    print('  • 1,000-step diffusion lower-bound: ~3.56 s (One pass is >800x faster)')
     print('  • Low-latency / near-real-time streaming anomaly detection')
     print('='*60 + '\n')
 
